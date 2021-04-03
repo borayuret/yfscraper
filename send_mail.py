@@ -15,10 +15,7 @@ def send(filename):
     from_address = 'ptn8403@gmail.com'
     to_address = 'bora.yuret@bilgeadam.com'
 
-    # to_list = ['bora.yuret@bilgeadam.com',
-    #            'alpatilir@gmail.com',
-    #            'utku.gokcen13@gmail.com',
-    #            'alikeremcevik@outlook.com']
+
 
     subject = "Yfscraper'dan mail geldi! " + filename
 
