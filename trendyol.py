@@ -2,6 +2,7 @@
 
 import requests
 from bs4 import BeautifulSoup
+import ortak
 
 hisse_url = "https://www.trendyol.com/vestel/kmi-9701-g-kurutma-makinesi-p-77471681?boutiqueId=555729&merchantId=107179"
 
@@ -17,17 +18,4 @@ fiyat = bilgi_bar[1].get_text()
 
 print(fiyat)
 
-bosluk_yeri = fiyat.find(' ')
-
-raw_fiyat = fiyat[:bosluk_yeri]
-
-print("Raw Fiyat(Tl sız):", raw_fiyat)
-
-nokta_yeri = raw_fiyat.find(".")
-
-if nokta_yeri >= 0:
-    fiyat = raw_fiyat[0:nokta_yeri] + raw_fiyat[nokta_yeri+1:]
-
-fiyat = int(fiyat)
-print(fiyat)
-
+print(ortak.fiyat_temizle(fiyat))

@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import random
+from datetime import date
+import csv
+import send_mail
+
 
 # User-agent tanımlıyorum. Scraping yaparken beni browser sansın diye.
 user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
@@ -10,9 +14,22 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/5
                    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1']
 
 
-sembol_liste = ["AMZN", "GOOG", "FB", "NFLX", "AAPL", "MSFT"]
+sembol_liste = ["KO", "AMZN", "GOOG", "FB", "NFLX", "AAPL", "MSFT"]
+
+today = str(date.today())+".csv"
+
+# boş satırdan kurtulmak için - newline
+# https://stackoverflow.com/questions/3348460/csv-file-written-with-python-has-blank-lines-between-each-row
+
+csv_file = open(today, "w", newline='')
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['Stock Name', 'Current Price', 'Previous Close',
+                     'Open', 'Bid', 'Ask', "Day's Range", '52 Week Range',
+                     'Volume', 'Avg. Volume'])
 
 for sembol in sembol_liste:
+
+    stock = []
 
     user_agent = random.choice(user_agent_list)
     agent_header = {'User-Agent': user_agent}
@@ -45,6 +62,9 @@ for sembol in sembol_liste:
     print(hisse_title + " - " + hisse_fiyat)
     print('-------------------------')
 
+    stock.append(hisse_title)
+    stock.append(hisse_fiyat)
+
     table_info = soup.find('div', class_="D(ib) W(1/2) Bxz(bb) Pend(12px) Va(t) ie-7_D(i) smartphone_D(b) "
                                          "smartphone_W(100%) smartphone_Pend(0px) smartphone_BdY "
                                          "smartphone_Bdc($seperatorColor)")
@@ -59,9 +79,16 @@ for sembol in sembol_liste:
         satir_deger = satirlar[1].get_text()
 
         print(satir_baslik + ": " + satir_deger)
+        stock.append(satir_deger)
+    csv_writer.writerow(stock)
     print('********************************')
     # 5 saniye ya da belirli bir süre bekletmezsek,
     # scraping yapan bot olduğumuzu anlayıp bloklayabilirler.
-    time.sleep(5)
+    # time.sleep(1)
+
+csv_file.close()
+send_mail.send(today)
+
+#send_mail.send('tek.pdf')
 
 print('---END OF LIST---')
